@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-SimpleEQAudioProcessor::SimpleEQAudioProcessor()
+SimpleEQAudioProcessor::SimpleEQAudioProcessor() 
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -166,7 +166,7 @@ bool SimpleEQAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* SimpleEQAudioProcessor::createEditor()
 {
-    return new SimpleEQAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -187,5 +187,37 @@ void SimpleEQAudioProcessor::setStateInformation (const void* data, int sizeInBy
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
+
     return new SimpleEQAudioProcessor();
+}
+
+//Create parameters
+juce::AudioProcessorValueTreeState::ParameterLayout
+SimpleEQAudioProcessor::createParamaterLayout() {
+    //initialize layout object
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    //add lowcut freq value
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq","LowCut Freq",juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.f));
+    //add highcut freq value
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HiCut Freq","HiCut Freq",juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.f));
+    //add peak freq value
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Freq","Peak Freq",juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 750.f));
+    //add peak gain value (adds or removes volume I think? up or down on ableton EQ)
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Gain","Peak Gain",juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f));
+    //add quality control (controls how tight or wide peak band is).
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Freq","Peak Freq",juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f));
+
+    //create eq band choices
+
+    juce::StringArray bandChoices;
+    for (int i = 0; i < 4; i++) {
+        juce::String builder;
+        builder << (12 + i * 12);
+        builder << " db/Oct";
+        bandChoices.add(builder);
+    }
+    //add eq band choices.
+    layout.add(std::make_unique<juce::AudioParameterChoice>("LowCut Slope", "LowCut Slope", bandChoices, 0));
+    layout.add(std::make_unique<juce::AudioParameterChoice>("HiCut Slope", "HiCut Slope", bandChoices, 0));
+    return layout;
 }

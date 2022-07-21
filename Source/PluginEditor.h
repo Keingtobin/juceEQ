@@ -16,7 +16,7 @@
 */
 class SimpleEQAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
-public:
+public: 
     SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor&);
     ~SimpleEQAudioProcessorEditor() override;
 

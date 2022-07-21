@@ -13,7 +13,7 @@
 //==============================================================================
 /**
 */
-class SimpleEQAudioProcessor  : public juce::AudioProcessor
+class SimpleEQAudioProcessor  : public juce::AudioProcessor 
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
                             #endif
@@ -55,6 +55,13 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    //MyStuff
+
+    static juce::AudioProcessorValueTreeState::ParameterLayout
+        createParamaterLayout();
+
+    juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Paramaters", createParamaterLayout()};
 
 private:
     //==============================================================================
